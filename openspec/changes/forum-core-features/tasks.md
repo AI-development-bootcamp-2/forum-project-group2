@@ -44,7 +44,7 @@
 - [x] P1-F4 Create `client/src/components/Navbar.jsx` — reads `AuthContext`; when logged out shows links to `/login` and `/register`; when logged in shows `username` and a Logout button that calls `logout()` then navigates to `/`
 - [x] P1-F5 Create `client/src/components/LoginForm.jsx` — controlled form with `email` + `password` fields; on submit calls `authService.login`, then `AuthContext.login(token, user)`, then navigates to `/`; display error message on failure
 - [x] P1-F6 Create `client/src/components/RegisterForm.jsx` — controlled form with `username`, `email`, `password` fields; on submit calls `authService.register`, then `AuthContext.login(token, user)`, then navigates to `/`; display error message on failure
-- [ ] P1-F7 Create `client/src/components/PrivateRoute.jsx` — reads `token` from `AuthContext`; if falsy redirects to `/login`; otherwise renders `<Outlet />`
+- [x] P1-F7 Create `client/src/components/PrivateRoute.jsx` — reads `token` from `AuthContext`; if falsy redirects to `/login`; otherwise renders `<Outlet />`
 - [ ] P1-F8 Create `client/src/App.jsx` — **pre-wire ALL routes** so Person 2 and Person 3 never touch this file:
   ```
   /                  → <PostList />          (public)
