@@ -31,7 +31,7 @@
 
 ### Frontend
 
-- [ ] P1-F1 Run `npm install react-router-dom` inside `client/` if not already present
+- [x] P1-F1 Run `npm install react-router-dom` inside `client/` if not already present
 - [ ] P1-F2 Create `client/src/context/AuthContext.jsx` — React context with state `{ user, token }`:
   - Read `localStorage.getItem('token')` and `localStorage.getItem('user')` on mount to rehydrate
   - `login(token, user)`: set state, write both to `localStorage`
