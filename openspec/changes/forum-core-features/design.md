@@ -75,7 +75,45 @@ A single Express middleware reads the `Authorization` header, verifies the token
 
 ---
 
-### 7. React Auth context
+### 7. Dependency injection for the MongoDB handle (no cross-person imports)
+
+**Choice**: `server/index.js` (owned by Person 1) calls `connectDb()`, then passes the resulting `db` handle into each route factory as a parameter. Route and controller files for posts and comments never import from `server/config/`.
+
+```js
+// server/index.js  (Person 1 — only file that touches config/)
+const { connectDb } = require('./config/db');
+const postsRouter   = require('./routes/posts');      // Person 2
+const commentsRouter = require('./routes/comments');  // Person 3
+
+const db = await connectDb();
+app.use('/api/posts',    postsRouter(db));
+app.use('/api/posts',    commentsRouter(db));  // comments are nested under posts
+```
+
+```js
+// server/routes/posts.js  (Person 2 — receives db, never imports config/)
+module.exports = (db) => {
+  const router = express.Router();
+  // use db directly
+  return router;
+};
+```
+
+```js
+// server/routes/comments.js  (Person 3 — same pattern)
+module.exports = (db) => {
+  const router = express.Router();
+  return router;
+};
+```
+
+**Rationale**: Each person owns a completely disjoint set of files. Person 2 and Person 3 have zero imports from files they don't own. The only shared contract is the `(db) => router` function signature, agreed upfront.
+
+**Alternative considered**: Each route imports `getDb()` directly — works at runtime but creates an invisible cross-person file dependency that triggers merge friction whenever `db.js` changes.
+
+---
+
+### 8. React Auth context
 
 A React context (`AuthContext`) holds the current user and token, reads from `localStorage` on mount, and exposes `login()` / `logout()` helpers. All components that need auth state consume this context.
 
