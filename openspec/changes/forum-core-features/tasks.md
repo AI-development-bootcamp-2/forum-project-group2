@@ -37,7 +37,7 @@
   - `login(token, user)`: set state, write both to `localStorage`
   - `logout()`: clear state, remove both from `localStorage`
   - Export `AuthContext` and `AuthProvider`
-- [ ] P1-F3 Create `client/src/services/authService.js` — export:
+- [x] P1-F3 Create `client/src/services/authService.js` — export:
   - `register({ username, email, password })` → `POST /api/auth/register`
   - `login({ email, password })` → `POST /api/auth/login`
   - Both return the parsed JSON response; throw on non-2xx
