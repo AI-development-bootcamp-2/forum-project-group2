@@ -17,8 +17,8 @@
 - [ ] P1-B3 Create `server/config/indexes.js` — export `async createIndexes(db)` that creates: unique index on `users.email`, unique index on `users.username`, descending index on `posts.createdAt`, ascending index on `comments.postId`; all calls are idempotent
 - [ ] P1-B4 Create `server/middleware/auth.js` — export `requireAuth(req, res, next)`: reads `Authorization: Bearer <token>`, verifies with `process.env.JWT_SECRET`, attaches `req.user = { userId, username }`, returns 401 if missing or invalid
 - [ ] P1-B5 Create `server/controllers/authController.js` — export `register(db)` and `login(db)`, each returning an Express handler (curried on `db`):
-  - `register`: validate `username`, `email`, `password` present and `password` ≥ 6 chars; check uniqueness against `users` collection (409 on conflict); hash password with `bcryptjs` (10 rounds); insert user; return 201 `{ token, user: { id, username, email } }`
-  - `login`: find user by `email` (401 if not found); compare password with `bcryptjs.compare` (401 if wrong); return 200 `{ token, user: { id, username, email } }`; use identical 401 message for both failure cases to prevent email enumeration
+  - `register`: validate `username`, `email`, `password` present and `password` ≥ 6 chars; check uniqueness against `users` collection (409 on conflict); hash password with `bcryptjs` (10 rounds); insert user; return 201 `{ token, user: { _id, username, email } }`
+  - `login`: find user by `email` (401 if not found); compare password with `bcryptjs.compare` (401 if wrong); return 200 `{ token, user: { _id, username, email } }`; use identical 401 message for both failure cases to prevent email enumeration
 - [ ] P1-B6 Create `server/routes/auth.js` — export a plain router (no db needed): `POST /register` → `authController.register(db)`, `POST /login` → `authController.login(db)`; this file accepts `db` the same way as other routers: `module.exports = (db) => router`
 - [ ] P1-B7 Create `server/index.js` — full entry point:
   1. Load `dotenv`; exit with clear error if `JWT_SECRET` is not set
@@ -92,7 +92,7 @@
 - [ ] P2-F2 Create `client/src/components/PostList.jsx` — on mount calls `postsService.listPosts(page)`; renders list of posts showing title, `authorUsername`, and formatted `createdAt`; each item links to `/posts/:id`; renders Previous / Next buttons using `page` and `totalPages` from the response
 - [ ] P2-F3 Create `client/src/components/PostDetail.jsx` — reads `id` from route params; calls `postsService.getPost(id)` on mount; renders post title, body, author, date; renders `<PostActions>` below the post header; renders `<CommentList postId={id} />` and `<CommentForm postId={id} />` below (Person 3's components — import from their agreed paths)
 - [ ] P2-F4 Create `client/src/components/PostForm.jsx` — used for both create and edit; reads `id` from route params to determine mode; if `id` present: load existing post and pre-fill fields, submit calls `postsService.updatePost`; if no `id`: submit calls `postsService.createPost`; on success navigate to `/posts/:id`; controlled inputs for `title` (text) and `body` (textarea)
-- [ ] P2-F5 Create `client/src/components/PostActions.jsx` — receives `post` as prop; reads `user` from `AuthContext`; renders Edit link (to `/posts/:id/edit`) and Delete button **only when** `user?.id === post.authorId`; Delete calls `postsService.deletePost(post._id)` then navigates to `/`
+- [ ] P2-F5 Create `client/src/components/PostActions.jsx` — receives `post` as prop; reads `user` from `AuthContext`; renders Edit link (to `/posts/:id/edit`) and Delete button **only when** `user?._id === post.authorId`; Delete calls `postsService.deletePost(post._id)` then navigates to `/`
 
 ---
 
@@ -125,7 +125,7 @@
   - Read token from `localStorage.getItem('token')` for write calls
 - [ ] P3-F2 Create `client/src/components/CommentList.jsx` — receives `postId` as prop; calls `commentsService.listComments(postId)` on mount; renders a list of `<CommentItem>` components; re-fetches when a comment is added or deleted (accept an optional `refresh` counter prop to trigger re-fetch)
 - [ ] P3-F3 Create `client/src/components/CommentForm.jsx` — receives `postId` and `onCommentAdded` callback as props; shown only when `AuthContext` has a logged-in user; controlled textarea for `body`; on submit calls `commentsService.createComment` then calls `onCommentAdded()` and clears the field
-- [ ] P3-F4 Create `client/src/components/CommentItem.jsx` — receives `comment` and `onDeleted` callback as props; displays `authorUsername`, formatted `createdAt`, and `body`; reads `user` from `AuthContext`; shows Edit and Delete controls **only when** `user?.id === comment.authorId`; Edit toggles to an inline textarea pre-filled with `body`, submits via `commentsService.updateComment`, then re-renders with new body; Delete calls `commentsService.deleteComment` then `onDeleted()`
+- [ ] P3-F4 Create `client/src/components/CommentItem.jsx` — receives `comment` and `onDeleted` callback as props; displays `authorUsername`, formatted `createdAt`, and `body`; reads `user` from `AuthContext`; shows Edit and Delete controls **only when** `user?._id === comment.authorId`; Edit toggles to an inline textarea pre-filled with `body`, submits via `commentsService.updateComment`, then re-renders with new body; Delete calls `commentsService.deleteComment` then `onDeleted()`
 
 ---
 

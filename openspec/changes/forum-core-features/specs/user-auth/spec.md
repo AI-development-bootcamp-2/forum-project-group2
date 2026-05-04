@@ -5,34 +5,34 @@ The system SHALL allow a new visitor to create an account by providing a unique 
 
 #### Scenario: Successful registration
 - **WHEN** a POST request is sent to `/api/auth/register` with a unique `username`, unique `email`, and a `password` of at least 6 characters
-- **THEN** the system creates a user document in the `users` collection, returns HTTP 201 with `{ token, user: { id, username, email } }`
+- **THEN** the system creates a user document in the `users` collection, returns HTTP 201 with `{ token, user: { _id, username, email } }`
 
 #### Scenario: Duplicate email rejected
 - **WHEN** a POST request is sent to `/api/auth/register` with an `email` that already exists
-- **THEN** the system returns HTTP 409 with an error message indicating the email is taken
+- **THEN** the system returns HTTP 409 with `{ error: "Email already in use" }`
 
 #### Scenario: Duplicate username rejected
 - **WHEN** a POST request is sent to `/api/auth/register` with a `username` that already exists
-- **THEN** the system returns HTTP 409 with an error message indicating the username is taken
+- **THEN** the system returns HTTP 409 with `{ error: "Username already taken" }`
 
 #### Scenario: Missing required fields
 - **WHEN** a POST request is sent to `/api/auth/register` with any of `username`, `email`, or `password` absent
-- **THEN** the system returns HTTP 400 with a validation error
+- **THEN** the system returns HTTP 400 with `{ error: "<field> is required" }`
 
 ### Requirement: User login
 The system SHALL allow a registered user to authenticate using their email and password. On success the system SHALL return a signed JWT (7-day expiry) and the user's public profile.
 
 #### Scenario: Successful login
 - **WHEN** a POST request is sent to `/api/auth/login` with a valid `email` and matching `password`
-- **THEN** the system returns HTTP 200 with `{ token, user: { id, username, email } }`
+- **THEN** the system returns HTTP 200 with `{ token, user: { _id, username, email } }`
 
 #### Scenario: Wrong password
 - **WHEN** a POST request is sent to `/api/auth/login` with a valid `email` but incorrect `password`
-- **THEN** the system returns HTTP 401 with an error message
+- **THEN** the system returns HTTP 401 with `{ error: "Invalid email or password" }`
 
 #### Scenario: Unknown email
 - **WHEN** a POST request is sent to `/api/auth/login` with an `email` not found in the `users` collection
-- **THEN** the system returns HTTP 401 with an error message (same wording as wrong password to avoid enumeration)
+- **THEN** the system returns HTTP 401 with `{ error: "Invalid email or password" }` (identical wording to wrong-password case to prevent email enumeration)
 
 ### Requirement: User logout
 The system SHALL support logout by discarding the JWT on the client side. No server-side session invalidation is required.

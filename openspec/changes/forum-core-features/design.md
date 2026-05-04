@@ -113,7 +113,17 @@ module.exports = (db) => {
 
 ---
 
-### 8. React Auth context
+### 8. Uniform error response shape
+
+**Choice**: All error responses use `{ "error": "<message>" }`.
+
+**Rationale**: Single key to read on the client — `err.error` — regardless of status code. Agreed upfront so frontend and backend can be developed in parallel without ambiguity.
+
+**Applies to**: 400 (validation), 401 (auth), 403 (forbidden), 404 (not found), 409 (conflict).
+
+---
+
+### 9. React Auth context
 
 A React context (`AuthContext`) holds the current user and token, reads from `localStorage` on mount, and exposes `login()` / `logout()` helpers. All components that need auth state consume this context.
 
