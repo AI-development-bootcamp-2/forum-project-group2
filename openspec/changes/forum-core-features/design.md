@@ -5,7 +5,7 @@ Greenfield implementation on an existing React + Vite / Express / MongoDB stack.
 ## Goals / Non-Goals
 
 **Goals:**
-- JWT authentication (register, login, logout) with protected write endpoints
+- Session-based authentication (register, login, logout) with protected write endpoints
 - Full CRUD for posts and flat comments
 - Public read access without a token
 - Author-only edit/delete enforced server-side
@@ -21,31 +21,25 @@ Greenfield implementation on an existing React + Vite / Express / MongoDB stack.
 
 ## Decisions
 
-### 1. JWT stored in localStorage (not httpOnly cookie)
+### 1. Session cookie auth (no JWT, no localStorage)
 
-**Choice**: Store the JWT in `localStorage` and send it via `Authorization: Bearer` header.
+**Choice**: `express-session` on the server with an in-memory store. On login the server creates a session and sets a `connect.sid` cookie. The browser sends the cookie automatically on every request. The client stores the logged-in user in React state only — no localStorage, no token management.
 
-**Rationale**: Simpler client implementation; no CSRF token needed. The project scope doesn't require hardened XSS protection at this stage.
+**Rationale**: Simpler than JWT for this scope. Intentionally avoids secure defaults (no `httpOnly`, no `sameSite`, in-memory store) to expose common session vulnerabilities.
 
-**Alternative considered**: httpOnly cookie — safer against XSS but adds CSRF complexity and server-side cookie configuration.
+**Consequence for the client**: Because user state lives only in React memory, a page refresh logs the user out on the client side. The session still exists on the server; the user just needs to log in again to rehydrate client state.
 
----
-
-### 2. Token issued with 7-day expiry, no refresh token
-
-**Choice**: Single access token, 7-day TTL, no refresh flow.
-
-**Rationale**: Reduces implementation complexity for a forum MVP. Logout is handled client-side by deleting the token.
-
-**Alternative considered**: Short-lived access token + refresh token — necessary for production security but out of scope here.
+**Alternative considered**: JWT in localStorage — requires client-side token management and `Authorization` headers on every request.
 
 ---
 
-### 3. Passwords hashed with bcryptjs (cost factor 10)
+### 2. Passwords stored in plaintext
 
-**Choice**: `bcryptjs` with salt rounds = 10.
+**Choice**: Passwords are inserted into the `users` collection as-is, without hashing.
 
-**Rationale**: Standard, well-audited, pure-JS (no native bindings needed in dev).
+**Rationale**: Intentionally vulnerable — exposes the database credential leak risk.
+
+**Alternative considered**: `bcryptjs` hashing — correct for production but defeats the learning objective here.
 
 ---
 
