@@ -31,21 +31,21 @@
 
 ### Frontend
 
-- [ ] P1-F1 Run `npm install react-router-dom` inside `client/` if not already present
-- [ ] P1-F2 Create `client/src/context/AuthContext.jsx` — React context with state `{ user, token }`:
+- [x] P1-F1 Run `npm install react-router-dom` inside `client/` if not already present
+- [x] P1-F2 Create `client/src/context/AuthContext.jsx` — React context with state `{ user, token }`:
   - Read `localStorage.getItem('token')` and `localStorage.getItem('user')` on mount to rehydrate
   - `login(token, user)`: set state, write both to `localStorage`
   - `logout()`: clear state, remove both from `localStorage`
   - Export `AuthContext` and `AuthProvider`
-- [ ] P1-F3 Create `client/src/services/authService.js` — export:
+- [x] P1-F3 Create `client/src/services/authService.js` — export:
   - `register({ username, email, password })` → `POST /api/auth/register`
   - `login({ email, password })` → `POST /api/auth/login`
   - Both return the parsed JSON response; throw on non-2xx
-- [ ] P1-F4 Create `client/src/components/Navbar.jsx` — reads `AuthContext`; when logged out shows links to `/login` and `/register`; when logged in shows `username` and a Logout button that calls `logout()` then navigates to `/`
-- [ ] P1-F5 Create `client/src/components/LoginForm.jsx` — controlled form with `email` + `password` fields; on submit calls `authService.login`, then `AuthContext.login(token, user)`, then navigates to `/`; display error message on failure
-- [ ] P1-F6 Create `client/src/components/RegisterForm.jsx` — controlled form with `username`, `email`, `password` fields; on submit calls `authService.register`, then `AuthContext.login(token, user)`, then navigates to `/`; display error message on failure
-- [ ] P1-F7 Create `client/src/components/PrivateRoute.jsx` — reads `token` from `AuthContext`; if falsy redirects to `/login`; otherwise renders `<Outlet />`
-- [ ] P1-F8 Create `client/src/App.jsx` — **pre-wire ALL routes** so Person 2 and Person 3 never touch this file:
+- [x] P1-F4 Create `client/src/components/Navbar.jsx` — reads `AuthContext`; when logged out shows links to `/login` and `/register`; when logged in shows `username` and a Logout button that calls `logout()` then navigates to `/`
+- [x] P1-F5 Create `client/src/components/LoginForm.jsx` — controlled form with `email` + `password` fields; on submit calls `authService.login`, then `AuthContext.login(token, user)`, then navigates to `/`; display error message on failure
+- [x] P1-F6 Create `client/src/components/RegisterForm.jsx` — controlled form with `username`, `email`, `password` fields; on submit calls `authService.register`, then `AuthContext.login(token, user)`, then navigates to `/`; display error message on failure
+- [x] P1-F7 Create `client/src/components/PrivateRoute.jsx` — reads `token` from `AuthContext`; if falsy redirects to `/login`; otherwise renders `<Outlet />`
+- [x] P1-F8 Create `client/src/App.jsx` — **pre-wire ALL routes** so Person 2 and Person 3 never touch this file:
   ```
   /                  → <PostList />          (public)
   /posts/new         → <PostForm />          (private)
