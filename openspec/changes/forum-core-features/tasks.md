@@ -45,7 +45,7 @@
 - [x] P1-F5 Create `client/src/components/LoginForm.jsx` — controlled form with `email` + `password` fields; on submit calls `authService.login`, then `AuthContext.login(token, user)`, then navigates to `/`; display error message on failure
 - [x] P1-F6 Create `client/src/components/RegisterForm.jsx` — controlled form with `username`, `email`, `password` fields; on submit calls `authService.register`, then `AuthContext.login(token, user)`, then navigates to `/`; display error message on failure
 - [x] P1-F7 Create `client/src/components/PrivateRoute.jsx` — reads `token` from `AuthContext`; if falsy redirects to `/login`; otherwise renders `<Outlet />`
-- [ ] P1-F8 Create `client/src/App.jsx` — **pre-wire ALL routes** so Person 2 and Person 3 never touch this file:
+- [x] P1-F8 Create `client/src/App.jsx` — **pre-wire ALL routes** so Person 2 and Person 3 never touch this file:
   ```
   /                  → <PostList />          (public)
   /posts/new         → <PostForm />          (private)
