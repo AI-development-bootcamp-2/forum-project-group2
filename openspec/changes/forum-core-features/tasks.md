@@ -149,7 +149,4 @@
 - [ ] INT-8 Edit the comment inline; confirm updated body is saved
 - [ ] INT-9 Delete the comment; confirm it disappears from the list
 - [ ] INT-10 Delete the post; confirm redirect to list and post is gone
-- [ ] INT-11 Open the post list without logging in; confirm posts are visible and Add Post control is NOT shown; confirm Edit and Delete buttons ARE visible on each post
-- [ ] INT-12 As a guest, click Delete on a post; confirm nothing happens (no error, no change)
-- [ ] INT-13 As a guest, click Edit on a post, change the title/body and submit; confirm the post is updated and `authorUsername` is now `"guest"`
-- [ ] INT-14 Log in and attempt to edit a post authored by a different user; confirm the server returns 403
+- [ ] INT-11 Open the post list without logging in; confirm posts are visible, no create/edit/delete controls are shown
