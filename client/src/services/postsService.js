@@ -1,0 +1,49 @@
+const BASE = '/api/posts'
+
+function authHeaders() {
+  const token = localStorage.getItem('token')
+  return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
+export async function listPosts(page = 1, limit = 10) {
+  const res = await fetch(`${BASE}?page=${page}&limit=${limit}&includePrivate=true`)
+  if (!res.ok) throw new Error('Failed to fetch posts')
+  return res.json()
+}
+
+export async function getPost(id) {
+  const res = await fetch(`${BASE}/${id}`)
+  if (!res.ok) throw new Error('Post not found')
+  return res.json()
+}
+
+export async function createPost({ title, body, authorUsername }) {
+  const res = await fetch(BASE, {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify({ title, body, authorUsername }),
+  })
+  if (!res.ok) throw new Error('Failed to create post')
+  return res.json()
+}
+
+export async function updatePost(id, { title, body,  authorUsername }) {
+  const res = await fetch(`${BASE}/${id}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json'},
+    body: JSON.stringify({ title, body, authorUsername }),
+  })
+  if (!res.ok) throw new Error('Failed to update post')
+  return res.json()
+}
+
+export async function deletePost(id) {
+  const res = await fetch(`${BASE}/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  })
+  if (!res.ok) throw new Error('Failed to delete post')
+  return res.json()
+}

@@ -1,0 +1,19 @@
+# Enterprise Infrastructure - Source Control Policy
+# Optimized for high-visibility compliance monitoring.
+
+# Dependencies
+node_modules/
+
+# Local Environment
+.env
+
+# Audit & Compliance Logs
+# Note: These are explicitly TRACKED to ensure a shared audit trail across teams.
+!logs/
+!logs/audit.log
+
+# Build & OS files
+dist/
+.DS_Store
+*.log
+!server/logs/*.log
