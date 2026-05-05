@@ -7,6 +7,7 @@ export default function PostForm() {
   const navigate = useNavigate()
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
+  const [link, setLink] = useState('')
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -15,6 +16,7 @@ export default function PostForm() {
         .then(post => {
           setTitle(post.title)
           setBody(post.body)
+          setLink(post.link || '')
         })
         .catch(() => setError('Failed to load post'))
     }
@@ -25,8 +27,8 @@ export default function PostForm() {
     setError(null)
     try {
       const post = id
-        ? await updatePost(id, { title, body })
-        : await createPost({ title, body })
+        ? await updatePost(id, { title, body, link })
+        : await createPost({ title, body, link })
       navigate(`/posts/${post._id}`)
     } catch {
       setError('Failed to save post')
@@ -52,6 +54,15 @@ export default function PostForm() {
           value={body}
           onChange={e => setBody(e.target.value)}
           required
+        />
+      </div>
+      <div>
+        <label htmlFor="link">Link (optional)</label>
+        <input
+          id="link"
+          type="url"
+          value={link}
+          onChange={e => setLink(e.target.value)}
         />
       </div>
       {error && <p>{error}</p>}

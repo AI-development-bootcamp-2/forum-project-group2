@@ -36,3 +36,7 @@ coverage/
 Thumbs.db
 .vscode/
 .idea/
+
+tests.json
+ANSWER_KEY.md
+.claude/

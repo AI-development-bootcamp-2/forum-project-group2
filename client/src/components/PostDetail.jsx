@@ -23,6 +23,7 @@ export default function PostDetail() {
       <p>by {post.authorUsername} &middot; {new Date(post.createdAt).toLocaleDateString()}</p>
       <PostActions post={post} />
       <p>{post.body}</p>
+      {post.link && <a href={post.link} target="_blank" rel="noreferrer">{post.link}</a>}
     </div>
   )
 }

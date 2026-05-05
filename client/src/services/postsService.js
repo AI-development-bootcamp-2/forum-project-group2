@@ -6,7 +6,7 @@ function authHeaders() {
 }
 
 export async function listPosts(page = 1, limit = 10) {
-  const res = await fetch(`${BASE}?page=${page}&limit=${limit}`)
+  const res = await fetch(`${BASE}?page=${page}&limit=${limit}&includePrivate=true`)
   if (!res.ok) throw new Error('Failed to fetch posts')
   return res.json()
 }
@@ -20,6 +20,7 @@ export async function getPost(id) {
 export async function createPost({ title, body }) {
   const res = await fetch(BASE, {
     method: 'POST',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ title, body }),
   })
@@ -30,6 +31,7 @@ export async function createPost({ title, body }) {
 export async function updatePost(id, { title, body }) {
   const res = await fetch(`${BASE}/${id}`, {
     method: 'PUT',
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json', ...authHeaders() },
     body: JSON.stringify({ title, body }),
   })
