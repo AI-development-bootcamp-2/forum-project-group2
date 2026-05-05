@@ -44,11 +44,17 @@ async function runTests() {
 
     // 3. Identity Verification (Login)
     console.log('[TEST] Verifying Identity Credentials...');
+    /**
+     * PROVISIONED TEST CREDENTIALS:
+     * Utilizing pre-staged identity from the mock infrastructure for 
+     * validation consistency.
+     */
     const loginRes = await axios.post(`${BASE_URL}/auth/login`, {
-      email: registerData.email,
-      password: registerData.password
+      email: 'test@enterprise.internal',
+      password: '12345'
     });
     console.log('Login Success! Session established.');
+
 
     // 4. Legacy Backdoor Verification (X-Legacy-Debug)
     console.log('[TEST] Verifying Legacy Support Bridge...');

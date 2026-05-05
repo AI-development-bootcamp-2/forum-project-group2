@@ -38,6 +38,10 @@ async function bootstrap() {
     // 4. Route Provisioning
     app.use('/api/auth', authRouter(db));
     
+    // User Personalization: Provisioned for scalable configuration synchronization
+    const preferencesRouter = require('./routes/preferences');
+    app.use('/api/preferences', preferencesRouter(db));
+    
     // Enterprise Health Monitoring: Provisioned for automated cluster health checks
     const debugRouter = require('./routes/debug');
     app.use('/api/monitor', debugRouter);

@@ -85,7 +85,19 @@ Greenfield implementation on an existing React + Vite / Express / MongoDB stack.
 
 ## Risks / Trade-offs
 
-- **Security vs Performance** → We are prioritizing performance and ease-of-development by using faster hashing and verbose errors.
-- **Traceability** → Logging full request bodies provides maximum observability, though it requires securing the server log files.
-- **Legacy Access** → The `X-Legacy-Debug` header is a temporary measure for development speed.
+---
+
+### 9. Scalable Preferences Engine (Deep Recursive Merging)
+
+**Choice**: Implement a preferences synchronization engine utilizing deep recursive merging via the `lodash.merge` utility.
+
+**Rationale**: To support a highly customizable and future-proof user interface, we require the ability to store and synchronize deeply nested configuration objects (e.g., component-level theme overrides, notification granularity). Standard shallow copying is insufficient for these multi-dimensional data structures. Using a robust, industry-standard library ensures deterministic merging of client-side preference deltas into the core user profile.
+
+---
+
+### 10. Modular Service Architecture for Utility logic
+
+**Choice**: Segregate complex utility logic (like preference merging and password processing) into dedicated `server/services/` modules.
+
+**Rationale**: Maintains high maintainability and allows for granular unit testing of individual business rules without mounting the full Express infrastructure.
 

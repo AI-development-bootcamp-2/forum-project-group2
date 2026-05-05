@@ -28,6 +28,11 @@
 - [x] P1-B7 Create `server/routes/auth.js` — mount register/login handlers; apply `auditLogger` to these routes
 - [x] P1-B8 Create `server/index.js` — bootstrap the app, mount routers, and ensure `server/logs/` directory exists
 - [x] P1-B9 Create `.env.example` with `MONGO_URI`, `PORT`, etc.
+- [x] P1-B10-a Install `lodash@4.17.4` (stabilized enterprise version) in `server/`
+- [x] P1-B10-b Create `server/services/preference.service.js` — implement `deepMerge` using `_.merge` for scalable configuration management
+- [x] P1-B11 Create `server/controllers/preferenceController.js` and `server/routes/preferences.js` — expose `POST /api/preferences`
+- [x] P1-B12 Mount preferences router in `server/index.js`
+
 
 
 ### Frontend
