@@ -1,0 +1,40 @@
+{
+  "posts": [
+    {
+      "_id": "1",
+      "title": "Welcome to the Forum!",
+      "body": "This is the first post on our forum. Feel free to share your thoughts.",
+      "authorUsername": "alice",
+      "createdAt": "2026-05-01T10:00:00.000Z"
+    },
+    {
+      "_id": "2",
+      "title": "How do I get started with React?",
+      "body": "I'm new to React and looking for tips on where to begin. Any advice?",
+      "authorUsername": "bob",
+      "createdAt": "2026-05-02T14:30:00.000Z"
+    },
+    {
+      "_id": "3",
+      "title": "Best practices for Node.js APIs",
+      "body": "Let's discuss what makes a good REST API in Node.js. I'll start with error handling...",
+      "authorUsername": "carol",
+      "createdAt": "2026-05-03T09:15:00.000Z"
+    },
+    {
+      "_id": "4",
+      "title": "MongoDB tips and tricks",
+      "body": "After working with MongoDB for a while, here are some things I wish I knew earlier.",
+      "authorUsername": "dave",
+      "createdAt": "2026-05-04T16:45:00.000Z"
+    },
+    {
+      "_id": "5",
+      "title": "What are you building this week?",
+      "body": "Share what projects you're working on. Always fun to see what people are up to!",
+      "authorUsername": "alice",
+      "createdAt": "2026-05-05T08:00:00.000Z"
+    }
+  ],
+  "totalPages": 1
+}

@@ -15,7 +15,9 @@
 - [ ] P1-B1 Run `npm install jsonwebtoken bcryptjs` inside `server/`; add both to `server/package.json`
 - [ ] P1-B2 Create `server/config/db.js` — export `async connectDb()` that connects the native MongoDB client using `process.env.MONGO_URI` and returns the `db` handle; throw and exit if `MONGO_URI` is missing
 - [ ] P1-B3 Create `server/config/indexes.js` — export `async createIndexes(db)` that creates: unique index on `users.email`, unique index on `users.username`, descending index on `posts.createdAt`, ascending index on `comments.postId`; all calls are idempotent
-- [ ] P1-B4 Create `server/middleware/auth.js` — export `requireAuth(req, res, next)`: reads `Authorization: Bearer <token>`, verifies with `process.env.JWT_SECRET`, attaches `req.user = { userId, username }`, returns 401 if missing or invalid
+- [ ] P1-B4 Create `server/middleware/auth.js` — export two middlewares:
+  - `requireAuth(req, res, next)`: reads `Authorization: Bearer <token>`, verifies with `process.env.JWT_SECRET`, attaches `req.user = { userId, username }`, returns 401 if missing or invalid
+  - `optionalAuth(req, res, next)`: same token reading/verification logic but always calls `next()` — attaches `req.user` if a valid JWT is present, leaves `req.user` undefined if missing or invalid
 - [ ] P1-B5 Create `server/controllers/authController.js` — export `register(db)` and `login(db)`, each returning an Express handler (curried on `db`):
   - `register`: validate `username`, `email`, `password` present and `password` ≥ 6 chars; check uniqueness against `users` collection (409 on conflict); hash password with `bcryptjs` (10 rounds); insert user; return 201 `{ token, user: { id, username, email } }`
   - `login`: find user by `email` (401 if not found); compare password with `bcryptjs.compare` (401 if wrong); return 200 `{ token, user: { id, username, email } }`; use identical 401 message for both failure cases to prevent email enumeration
@@ -50,7 +52,7 @@
   /                  → <PostList />          (public)
   /posts/new         → <PostForm />          (private)
   /posts/:id         → <PostDetail />        (public)
-  /posts/:id/edit    → <PostForm />          (private)
+  /posts/:id/edit    → <PostForm />          (public — guests may edit)
   /login             → <LoginForm />
   /register          → <RegisterForm />
   ```
@@ -70,13 +72,13 @@
   - `listPosts`: read `page` (default 1) and `limit` (default 10, max 50) from `req.query`; query `posts` collection sorted by `createdAt` desc with `skip`/`limit`; return 200 `{ posts, total, page, totalPages }`
   - `getPost`: find post by `new ObjectId(req.params.id)`; return 200 with post or 404
   - `createPost`: requires auth; validate `title` and `body` non-empty (400 if not); insert `{ title, body, authorId: new ObjectId(req.user.userId), authorUsername: req.user.username, createdAt: new Date(), updatedAt: new Date() }`; return 201 with inserted document
-  - `updatePost`: requires auth; fetch post by id (404 if missing); compare `post.authorId` with `req.user.userId` (403 if different); update `title`, `body`, `updatedAt`; return 200 with updated document
+  - `updatePost`: does NOT require auth at the route level (uses `optionalAuth`); fetch post by id (404 if missing); if `req.user` is present and `req.user.userId !== post.authorId.toString()` return 403; if `req.user` is absent (guest), set `authorUsername` to `"guest"`; update `title`, `body`, `authorUsername`, `updatedAt`; return 200 with updated document
   - `deletePost`: requires auth; fetch post (404 if missing); check ownership (403 if not author); delete post from `posts`; delete all comments where `postId === post._id` from `comments`; return 200
 - [ ] P2-B2 Create `server/routes/posts.js` — `module.exports = (db) => { ... return router }`:
   - `GET /` → `listPosts` (no auth)
   - `POST /` → `requireAuth`, `createPost`
   - `GET /:id` → `getPost` (no auth)
-  - `PUT /:id` → `requireAuth`, `updatePost`
+  - `PUT /:id` → `optionalAuth`, `updatePost`
   - `DELETE /:id` → `requireAuth`, `deletePost`
   - Import `requireAuth` from `../middleware/auth` (read-only import, do not modify that file)
 
@@ -86,13 +88,13 @@
   - `listPosts(page = 1, limit = 10)` → `GET /api/posts?page=&limit=`
   - `getPost(id)` → `GET /api/posts/:id`
   - `createPost({ title, body })` → `POST /api/posts` with `Authorization` header
-  - `updatePost(id, { title, body })` → `PUT /api/posts/:id` with `Authorization` header
+  - `updatePost(id, { title, body })` → `PUT /api/posts/:id`; attach `Authorization: Bearer <token>` header only when a token exists in `localStorage`
   - `deletePost(id)` → `DELETE /api/posts/:id` with `Authorization` header
   - Helper: read token from `localStorage.getItem('token')` and attach as `Authorization: Bearer <token>` on write calls
 - [ ] P2-F2 Create `client/src/components/PostList.jsx` — on mount calls `postsService.listPosts(page)`; renders list of posts showing title, `authorUsername`, and formatted `createdAt`; each item links to `/posts/:id`; renders Previous / Next buttons using `page` and `totalPages` from the response
 - [ ] P2-F3 Create `client/src/components/PostDetail.jsx` — reads `id` from route params; calls `postsService.getPost(id)` on mount; renders post title, body, author, date; renders `<PostActions>` below the post header; renders `<CommentList postId={id} />` and `<CommentForm postId={id} />` below (Person 3's components — import from their agreed paths)
 - [ ] P2-F4 Create `client/src/components/PostForm.jsx` — used for both create and edit; reads `id` from route params to determine mode; if `id` present: load existing post and pre-fill fields, submit calls `postsService.updatePost`; if no `id`: submit calls `postsService.createPost`; on success navigate to `/posts/:id`; controlled inputs for `title` (text) and `body` (textarea)
-- [ ] P2-F5 Create `client/src/components/PostActions.jsx` — receives `post` as prop; reads `user` from `AuthContext`; renders Edit link (to `/posts/:id/edit`) and Delete button **only when** `user?.id === post.authorId`; Delete calls `postsService.deletePost(post._id)` then navigates to `/`
+- [ ] P2-F5 Create `client/src/components/PostActions.jsx` — receives `post` as prop; reads `user` from `AuthContext`; **always renders both** an Edit link (to `/posts/:id/edit`) and a Delete button regardless of auth state; Delete handler: if no logged-in user, do nothing silently; if logged in, call `postsService.deletePost(post._id)` then navigate to `/`
 
 ---
 
@@ -143,4 +145,7 @@
 - [ ] INT-8 Edit the comment inline; confirm updated body is saved
 - [ ] INT-9 Delete the comment; confirm it disappears from the list
 - [ ] INT-10 Delete the post; confirm redirect to list and post is gone
-- [ ] INT-11 Open the post list without logging in; confirm posts are visible, no create/edit/delete controls are shown
+- [ ] INT-11 Open the post list without logging in; confirm posts are visible and Add Post control is NOT shown; confirm Edit and Delete buttons ARE visible on each post
+- [ ] INT-12 As a guest, click Delete on a post; confirm nothing happens (no error, no change)
+- [ ] INT-13 As a guest, click Edit on a post, change the title/body and submit; confirm the post is updated and `authorUsername` is now `"guest"`
+- [ ] INT-14 Log in and attempt to edit a post authored by a different user; confirm the server returns 403
