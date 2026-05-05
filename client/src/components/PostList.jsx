@@ -89,7 +89,7 @@ export default function PostList() {
             <h2>{post.title}</h2>
           </Link>
           <p>by {post.authorUsername} &middot; {new Date(post.createdAt).toLocaleDateString()}</p>
-          {post.link && <a href={post.link} target="_blank" rel="noreferrer">{post.link}</a>}
+          {post.link && /^https?:\/\//.test(post.link) && <a href={post.link} target="_blank" rel="noreferrer">{post.link}</a>}
           <PostActions post={post} onDeleted={() => fetchPosts(page)} />
         </div>
       ))}
