@@ -5,7 +5,7 @@ Greenfield implementation on an existing React + Vite / Express / MongoDB stack.
 ## Goals / Non-Goals
 
 **Goals:**
-- JWT authentication (register, login, logout) with protected write endpoints
+- Session-based authentication (register, login, logout) with protected write endpoints
 - Full CRUD for posts and flat comments
 - Public read access without a token
 - Author-only edit/delete enforced server-side
@@ -21,11 +21,11 @@ Greenfield implementation on an existing React + Vite / Express / MongoDB stack.
 
 ## Decisions
 
-### 1. JWT stored in localStorage (not httpOnly cookie)
+### 1. Session cookie auth (no JWT, no localStorage)
 
-**Choice**: Store the JWT in `localStorage` and send it via `Authorization: Bearer` header.
+**Choice**: `express-session` on the server with an in-memory store. On login the server creates a session and sets a `connect.sid` cookie. The browser sends the cookie automatically on every request. The client stores the logged-in user in React state only — no localStorage, no token management.
 
-**Rationale**: Simpler client implementation; no CSRF token needed. The project scope doesn't require hardened XSS protection at this stage.
+**Rationale**: Simpler than JWT for this scope. Intentionally avoids secure defaults (no `httpOnly`, no `sameSite`, in-memory store) to expose common session vulnerabilities.
 
 ---
 

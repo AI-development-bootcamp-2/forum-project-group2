@@ -2,3 +2,5 @@
 # Cyber Game Cheat Sheet
 VULNERABILITY_MAP.md
 PROTOTYPE_POLLUTION_EXPLOIT.md
+node_modules/
+package-lock.json
